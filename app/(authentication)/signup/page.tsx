@@ -1,3 +1,4 @@
+'use client'
 import SignupCard from "@/features/signup/SignupCard"
 
 const Signup = ()=>{
