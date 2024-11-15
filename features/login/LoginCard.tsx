@@ -1,4 +1,6 @@
+'use client'
 import { FcGoogle, } from "react-icons/fc"
+import { loginAction } from "@/actions/auth_action";
 import { FaApple, FaMicrosoft } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -22,7 +24,8 @@ import Link from "next/link";
 import {z} from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
-import { useRouter } from "next/navigation";
+
+
 
 
 const schema = z.object({
@@ -31,34 +34,35 @@ const schema = z.object({
 })
 
 const LoginCard = ()=>{
-  const router = useRouter()
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = async (value: z.infer<typeof schema>)=>{
-    console.log(value)
-    const res = await fetch("http://localhost:9001/api/user/login",{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      credentials:'include',
-      body:JSON.stringify({
-        email:value.email,
-        password:value.password
-      })
-    })
-    console.log("response info: "+res.ok)
-    if(!res.ok){
-      const errorData = await res.json();
-      throw new Error(errorData.message || 'Login failed');
-    }
-    router.push("/")
-  }
+  // const onSubmit = 
+  // async (value: z.infer<typeof schema>)=>{
+  //   'use server'
+  //   //console.log(value)
+  //   const res = await fetch("http://localhost:9001/api/user/login",{
+  //     method:'POST',
+  //     headers:{
+  //       'Content-Type':'application/json',
+  //     },
+  //     credentials:'include',
+  //     body:JSON.stringify({
+  //       email:value.email,
+  //       password:value.password
+  //     })
+  //   })
+  //   //console.log("response info: "+res.ok)
+  //   if(!res.ok){
+  //     const errorData = await res.json();
+  //     throw new Error(errorData.message || 'Login failed');
+  //   }
+  //   router.push("/")
+  // }
 
   return (
      <Card className="w-full h-4/5 md:w-[500px] p-7 rounded-sm shadow-sm">
@@ -67,7 +71,7 @@ const LoginCard = ()=>{
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit(data => {loginAction(data)})} className="flex flex-col gap-4">
             <FormField
               control={form.control}
               name="email"

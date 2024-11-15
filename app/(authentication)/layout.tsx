@@ -5,14 +5,14 @@ interface AuthenticationLOProps {
 
 const AuthenticationLO = ({children}:AuthenticationLOProps)=>{
   return(
-    <div className="min-h-screen bg-neutral-200">
+    <main className="min-h-screen bg-neutral-200">
       <div className="h-screen flex flex-col justify-center gap-10 items-center mx-auto p-4 max-w-screen-2xl">
         <nav>
           <Image src={"/logo.svg"} width={100} height={100} alt="logo"/>
         </nav>
         {children}
       </div>
-    </div>
+    </main>
   )
 }
 export default AuthenticationLO
