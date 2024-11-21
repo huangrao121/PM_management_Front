@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import {z} from "zod"
 import { cookies } from 'next/headers'
 import { backend_url } from '@/app/config/config'
+import { toast } from 'sonner'
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Must be 6 or more digits" })
@@ -42,7 +43,7 @@ const loginAction = async (value: z.infer<typeof schema>)=>{
         httpOnly: true,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: parseInt(expire), // 1 week
+        maxAge: parseInt(expire), // 2 hrs
       });
     }
     redirect('/')

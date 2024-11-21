@@ -9,14 +9,24 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { createWSaction } from "@/actions/workspace_action"
+import { workspaceSchema } from "@/app/schema/workspaceSchema"
+import { useRef } from "react"
+import Image from "next/image"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {ImageIcon} from "lucide-react"
+import { toast } from "sonner"
 interface WorkspacesProps {
   onCancel? : ()=>void
 }
-const workspaceSchema = z.object({
-  name: z.string().trim().min(1, "Required")
-})
+// const workspaceSchema = z.object({
+//   name: z.string().trim().min(1, "Required"),
+//   image: z.union([
+//     z.instanceof(File),
+//     z.string().transform((value) => value===""? undefined : value)
+//   ]).optional(),
+// })
 const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
-
+  const inputRef = useRef<HTMLInputElement>(null)
   const form = useForm<z.infer<typeof workspaceSchema>>({
     resolver: zodResolver(workspaceSchema),
     defaultValues: {
@@ -24,6 +34,31 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
     }
   })
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if(file){
+      form.setValue("image", file)
+    }
+  }
+
+  const submitThroughtWorkAction = (value: z.infer<typeof workspaceSchema>)=>{
+    try{
+      const formData = new FormData()
+      formData.append("name", value.name)
+      if(value.image instanceof File){
+        formData.append("workspace_image", value.image)
+      }
+      console.log(formData)
+      createWSaction(formData)
+      form.reset()
+      toast.success("Workspace created")
+    }catch{
+      //console.log("Create workspace failed")
+      toast.error("Failed to create workspace")
+    }
+    //formData.append("image", )
+    
+  }
   // const onSubmit = (value:z.infer<typeof workspaceSchema>)=>{
   //   console.log(value)
   // }
@@ -40,7 +75,7 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
       </div>
       <CardContent className="p-5">
       <Form {...form}>
-          <form onSubmit={form.handleSubmit((value)=>{createWSaction(value)})} className="flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit((value)=>{submitThroughtWorkAction(value)})} className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-5">
               <FormField
                 control={form.control}
@@ -53,6 +88,60 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="image"
+                render={({field}) => (
+                  <div className="flex flex-col gap-y-2">
+                    <div className="flex items-center gap-x-5">
+                      {
+                        field.value? (
+                          <div className="size-[72px] relative rounded-md overflow-hidden">
+                            <Image
+                              alt="workspace icon"
+                              src={field.value instanceof File?
+                                URL.createObjectURL(field.value)
+                                : field.value
+                              }
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <Avatar className='size-[72px]'>
+                            <AvatarFallback>
+                              <ImageIcon
+                                className="size-[36px]"
+                              />
+                            </AvatarFallback>
+                          </Avatar>
+                        )
+                      }
+                      <div className="flex flex-col">
+                        <p className="text-sm">Workspace Icon</p>
+                        <p className="text-sm text-muted-foreground">
+                          PNG, SVG, JPEG, JPG, max 10 MB
+                        </p>
+                        <input type="file" 
+                          className="hidden"
+                          ref={inputRef}
+                          onChange={handleImageUpload}
+                          accept=".jpg, .png, .svg, .jpeg"
+                        />
+                        <Button 
+                          type="button" 
+                          variant="link" 
+                          className="bg-blue-300"
+                          size="sm"
+                          onClick={()=>inputRef.current?.click()}
+                        >
+                          Upload Image
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 )}
               />
             </div>

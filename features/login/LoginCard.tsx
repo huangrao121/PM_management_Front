@@ -24,7 +24,7 @@ import Link from "next/link";
 import {z} from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
-
+import { toast } from "sonner";
 
 
 
@@ -63,7 +63,14 @@ const LoginCard = ()=>{
   //   }
   //   router.push("/")
   // }
-
+  const submitLogin =(data: z.infer<typeof schema>)=>{
+    try{
+      loginAction(data)
+      toast.success("Logged in successfully")
+    }catch{
+      toast.error("Logged in failed")
+    }
+  }
   return (
      <Card className="w-full h-4/5 md:w-[500px] p-7 rounded-sm shadow-sm">
       <CardHeader className="flex justify-center items-center">

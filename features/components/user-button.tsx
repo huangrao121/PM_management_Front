@@ -24,7 +24,7 @@ const UserButton = ({user}:{user: userButtonProps})=>{
         <DropdownMenuTrigger >
           <Avatar className="size-10 hover:opacity-80 transition border border-neutral-200 ">
             <AvatarFallback className="bg-neutral-100 text-lg text-neutral-500 flex items-center justify-center">
-              A
+              {user?.userName || "User"}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
@@ -32,7 +32,7 @@ const UserButton = ({user}:{user: userButtonProps})=>{
           <div className="flex flex-col items-center justify-center gap-2 px-3 py-4">
             <Avatar className="size-[52px] hover:opacity-80 transition border border-neutral-200 ">
               <AvatarFallback className="bg-neutral-100 text-xl text-neutral-500 flex items-center justify-center">
-                A
+              {user?.userName || "User"}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-center justify-center gap-2 pt-2">
