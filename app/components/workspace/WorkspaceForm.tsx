@@ -15,6 +15,8 @@ import Image from "next/image"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {ImageIcon} from "lucide-react"
 import { toast } from "sonner"
+import { cn } from "@/app/lib/utils"
+import { useRouter } from "next/navigation"
 interface WorkspacesProps {
   onCancel? : ()=>void
 }
@@ -25,7 +27,7 @@ interface WorkspacesProps {
 //     z.string().transform((value) => value===""? undefined : value)
 //   ]).optional(),
 // })
-const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
+const WorkspaceForm = ({onCancel}:WorkspacesProps)=>{
   const inputRef = useRef<HTMLInputElement>(null)
   const form = useForm<z.infer<typeof workspaceSchema>>({
     resolver: zodResolver(workspaceSchema),
@@ -33,7 +35,7 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
       name: "",
     }
   })
-
+  const router = useRouter()
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if(file){
@@ -48,15 +50,16 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
       if(value.image instanceof File){
         formData.append("workspace_image", value.image)
       }
-      console.log(formData)
+      //console.log(formData)
       createWSaction(formData)
-      form.reset()
       toast.success("Workspace created")
+      form.reset()
+      router.push("/")
+      onCancel?.()
     }catch{
       //console.log("Create workspace failed")
       toast.error("Failed to create workspace")
     }
-    //formData.append("image", )
     
   }
   // const onSubmit = (value:z.infer<typeof workspaceSchema>)=>{
@@ -130,15 +133,33 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
                           onChange={handleImageUpload}
                           accept=".jpg, .png, .svg, .jpeg"
                         />
-                        <Button 
-                          type="button" 
-                          variant="link" 
-                          className="bg-blue-300"
-                          size="sm"
-                          onClick={()=>inputRef.current?.click()}
-                        >
-                          Upload Image
-                        </Button>
+                        {!field.value ? (
+                          <Button 
+                            type="button" 
+                            variant="link" 
+                            className="bg-blue-300"
+                            size="sm"
+                            onClick={()=>inputRef.current?.click()}
+                          >
+                            Upload Image
+                          </Button>
+                          ):(
+                            <Button 
+                            type="button" 
+                            variant="link" 
+                            className="bg-blue-300"
+                            size="sm"
+                            onClick={()=>{
+                              field.onChange(null)
+                              if(inputRef.current){
+                                inputRef.current.value = ""
+                              }
+                            }}
+                            >
+                              Remove Image
+                            </Button>
+                          )
+                        }
                       </div>
                     </div>
                   </div>
@@ -147,7 +168,7 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
             </div>
             <Separator orientation="horizontal"/>
             <div className="flex flex-row items-center justify-end gap-x-3">
-              <Button type="button" variant="secondary" size={"md"} onClick={onCancel}>Cancel</Button>
+              <Button className={cn(!onCancel && "invisible")} type="button" variant="secondary" size={"md"} onClick={onCancel}>Cancel</Button>
               <Button type="submit" variant="default" size={"lg"}>Create Workspace</Button>
             </div>
           </form>
@@ -157,4 +178,4 @@ const WorkspacesForm = ({onCancel}:WorkspacesProps)=>{
   )
 }
 
-export default WorkspacesForm
+export default WorkspaceForm

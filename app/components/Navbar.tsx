@@ -5,7 +5,7 @@ import MobileSidebar from "./MobileSidebar";
 const Navbar = async ()=>{
   const cookieStore = cookies()
   const token = cookieStore.get('token')
-  console.log(token)
+  //console.log(token)
   const result = await getCurrentUser(token)
   return (
     <div className="pt-4 px-6 flex items-center justify-between">

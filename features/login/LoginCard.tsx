@@ -1,6 +1,7 @@
 'use client'
 import { FcGoogle, } from "react-icons/fc"
-import { loginAction } from "@/actions/auth_action";
+import { loginAction} from "@/actions/auth_action";
+import { schema } from '@/app/schema/userSchema'
 import { FaApple, FaMicrosoft } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -26,12 +27,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import { toast } from "sonner";
 
-
-
-const schema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Must be 6 or more digits" })
-})
 
 const LoginCard = ()=>{
 
@@ -78,7 +73,7 @@ const LoginCard = ()=>{
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(data => {loginAction(data)})} className="flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit(data => {submitLogin(data)})} className="flex flex-col gap-4">
             <FormField
               control={form.control}
               name="email"

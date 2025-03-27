@@ -1,7 +1,7 @@
 'use client'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger  } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
-import { UserType } from "@/app/lib/userType"
+import { UserType } from "@/app/lib/types/userType"
 import { useState } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 //import useLogout from "@/app/lib/hooks/useLogout"

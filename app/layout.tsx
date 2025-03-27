@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { QueryProvider } from "./components/QueryProvider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children, 
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -30,7 +31,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster/>
-        {children}
+          <QueryProvider>
+            <NuqsAdapter>
+              {children}
+            </NuqsAdapter>
+        </QueryProvider>
       </body>
     </html>
   );
