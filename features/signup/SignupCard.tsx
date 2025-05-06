@@ -23,28 +23,31 @@ import { useForm } from "react-hook-form"
 import Link from "next/link";
 import {z} from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signupAction } from "@/actions/auth_action";
+import { signupSchema} from '@/app/schema/userSchema'
 
-const signUpSchema = z.object({
-  email:z.string().email({ message: "Invalid email address" }),
-  password:z.string().min(6, { message: "Must be 6 or more digits" }),
-  confirmPassword:z.string().min(6, { message: "Must be 6 or more digits" })
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords must match",
-  path: ["confirmPassword"], // The path where the error message should be shown
-});
+// const signUpSchema = z.object({
+//   email:z.string().email({ message: "Invalid email address" }),
+//   password:z.string().min(6, { message: "Must be 6 or more digits" }),
+//   confirmPassword:z.string().min(6, { message: "Must be 6 or more digits" })
+// }).refine((data) => data.password === data.confirmPassword, {
+//   message: "Passwords must match",
+//   path: ["confirmPassword"], // The path where the error message should be shown
+// });
 
 const SignupCard = ()=>{
   const form = useForm({
     defaultValues:{
+      username: '',
       email:'',
       password:'',
       confirmPassword:''
     },
-    resolver:zodResolver(signUpSchema)
+    resolver:zodResolver(signupSchema)
   })
 
-  const onSubmit=(value:z.infer<typeof signUpSchema>)=>{
-    console.log(value)
+  const onSubmit=(value:z.infer<typeof signupSchema>)=>{
+    signupAction(value)
   }
 
   return (
@@ -55,7 +58,7 @@ const SignupCard = ()=>{
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <FormField
+            <FormField
               control={form.control}
               name="email"
               render={({field})=>(
@@ -67,7 +70,19 @@ const SignupCard = ()=>{
                 </FormItem>
               )}
             />
-            <FormMessage/>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({field})=>(
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="User Name" {...field} type="text"></Input>
+                  </FormControl>
+                  <FormMessage/>
+                </FormItem>
+              )}
+            />
+            {/* <FormMessage/> */}
             <FormField
               control={form.control}
               name="password"
