@@ -6,7 +6,7 @@ interface TaskDateProps {
   className?: string;
 }
 
-export const TaskDate = ({ value, className }: TaskDateProps) => {
+const TaskDate = ({ value, className }: TaskDateProps) => {
   const today = new Date();
   const endDate = new Date(value);
   const diffInDays = differenceInDays(endDate, today);
@@ -26,3 +26,5 @@ export const TaskDate = ({ value, className }: TaskDateProps) => {
     </div>
   );
 };
+
+export default TaskDate

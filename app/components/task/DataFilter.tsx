@@ -93,13 +93,14 @@ const DataFilter = ({hideProjectFilter}: DataFilterProps)=>{
         <SelectContent>
           <SelectItem value="all">All Assignee</SelectItem>
           <SelectSeparator/>
-          {memberOptions?.map((member)=>(
+          {memberOptions?.map((member:{id: number, name: string})=>(
             <SelectItem key={member.id} value={String(member.id)}>{member.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <Select defaultValue={projectId ?? undefined} onValueChange={onProjectChange}>
-        <SelectTrigger className="w-full lg:w-auto">
+      {!hideProjectFilter && (
+        <Select defaultValue={projectId ?? undefined} onValueChange={onProjectChange}>
+          <SelectTrigger className="w-full lg:w-auto">
           <div className="flex flex-row items-center pr-2">
             <FolderIcon className="size-4 mr-2"/>
             <SelectValue placeholder="Project"/>
@@ -108,11 +109,12 @@ const DataFilter = ({hideProjectFilter}: DataFilterProps)=>{
         <SelectContent>
           <SelectItem value="all">All Project</SelectItem>
           <SelectSeparator/>
-          {projectOptions?.map((project)=>(
+          {projectOptions?.map((project:{id: number, name: string})=>(
             <SelectItem key={project.id} value={String(project.id)}>{project.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
+      )}
       <DateChoose
         date={dueDate?new Date(dueDate): undefined}
         onChange={(value)=>{
@@ -121,7 +123,7 @@ const DataFilter = ({hideProjectFilter}: DataFilterProps)=>{
         placeholder="Due Date"
         className="w-full lg:w-auto text-neutral-900"
       />
-      <Button variant="outline" onClick={onReset} className="w-full lg:w-auto lg:ml-10">Reset</Button>
+      <Button variant="outline" onClick={onReset} className="w-full text-sm lg:w-auto lg:ml-10">Reset</Button>
     </div>
   )
 } 

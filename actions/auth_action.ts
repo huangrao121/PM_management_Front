@@ -55,51 +55,10 @@ const signupAction = async (value: z.infer<typeof signupSchema>)=>{
   }
 }
 
-const loginAction = async (value: z.infer<typeof schema>)=>{
-  //console.log(value)
-  const res = await fetch((backend_url + "/api/user/login"),{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-    },
-    credentials:'include',
-    body:JSON.stringify({
-      email:value.email,
-      password:value.password
-    })
-    //body: JSON.stringify(value)
-  })
-  //console.log(res)
-  //console.log("response info: "+res.ok)
-  if(!res.ok){
-    const errorData = await res.json();
-    throw new Error(errorData.message || 'Login failed');
-  }else{
-    const {headers} = res
-    const setCookieHeader = headers.get('set-cookie'); // Adjust the header name as per your backend's response
-  
-    // Step 3: Set the cookie in Next.js using the 'cookies()' API
-    if (setCookieHeader) {
-      // Assuming the header contains the cookie value directly, like "auth_token=someTokenValue; Path=/; HttpOnly"
-      const cookieValue = setCookieHeader.split(';')[0].split('=')[1]; // Extract the cookie value
-      const expire = setCookieHeader.split(';')[1].split('=')[1]
-      //console.log("cookie is: " +cookieValue + " expire is: "+expire)
-      cookies().set({
-        name: 'token',
-        value: cookieValue,
-        httpOnly: true,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: parseInt(expire), // 24 hrs
-      });
-    }
-    redirect('/')
-  }
-}
 
 const logoutAction = ()=>{
   cookies().delete('token')
   redirect('/login')
 }
 
-export {loginAction, logoutAction, signupAction}
+export {logoutAction, signupAction}

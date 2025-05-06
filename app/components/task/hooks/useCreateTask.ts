@@ -9,7 +9,7 @@ export const useCreateTask = () => {
   const mutate = useMutation({
     mutationFn: async (form: z.infer<typeof taskSchema>) => {
       console.log("form:",form)
-      const response = await fetch("http://localhost:8888" + "/api/tasks/", {
+      const response = await fetch("http://localhost:8888/api/tasks/", {
         method: "POST",
         body: JSON.stringify(form),
         headers: {

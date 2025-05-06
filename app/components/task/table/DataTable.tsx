@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -52,8 +52,20 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  // console.log("rows: ", table.getRowModel()?.rows)
   return (
     <div>
+      {/* <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter tasks..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+          // className="w-[150px] lg:w-[250px]"     
+        />
+      </div> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -75,7 +87,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel()?.rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -106,7 +118,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
-          variant="secondary"
+          variant="outline"
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
@@ -114,7 +126,7 @@ export function DataTable<TData, TValue>({
           Previous
         </Button>
         <Button
-          variant="secondary"
+          variant="outline"
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}

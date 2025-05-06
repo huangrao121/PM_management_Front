@@ -10,18 +10,20 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import { useRef } from "react"
-import { toast } from "sonner"
 import { cn } from "@/app/lib/utils"
 import { useRouter } from "next/navigation"
 import { taskSchema, TaskStatus } from "@/app/schema/taskSchema"
-import { useCreateTask } from "./hooks/useCreateTask"
+import { Task } from "@/app/lib/types/taskType"
+
 import { useWorkspaceId } from "@/app/lib/hooks/useWorkspaceId"
 import DateChoose from "./DateChoose"
 import MemberAvatar from "../avatar/member-avatar"
+import { useUpdateTask } from "./hooks/useUpdateTask"
 
 interface CreateTaskFormProps {
   onCancel? : ()=>void,
+  initialValues : Task,
+  taskId: string,
   projectOptions: {
     id: number,
     name: string,
@@ -32,32 +34,31 @@ interface CreateTaskFormProps {
   }[]
 }
 
-const CreateTaskForm = ({onCancel, projectOptions, memberOptions}:CreateTaskFormProps)=>{
-  const inputRef = useRef<HTMLInputElement>(null)
+const EditTaskForm = ({onCancel, initialValues, taskId, projectOptions, memberOptions}:CreateTaskFormProps)=>{
+  //const inputRef = useRef<HTMLInputElement>(null)
   const workspaceId = useWorkspaceId()
+  const {mutate, isPending} = useUpdateTask()
   const form = useForm<z.infer<typeof taskSchema>>({
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(taskSchema.omit({workspace_id: true, description: true})),
     defaultValues: {
-      workspace_id: Number(workspaceId),
+      ...initialValues,
+      workspace_id: Number(initialValues.workspace_id),
+      project_id: Number(initialValues.project_id),
+      assignee_id: Number(initialValues.assignee_id),
+      status: initialValues.status as TaskStatus,
+      due_date: initialValues.due_date ? new Date(initialValues.due_date) : undefined,
     }
   })
   const router = useRouter()
-  const {mutate, isPending} = useCreateTask()
 
 
   const submitTask = (value: z.infer<typeof taskSchema>)=>{
-    try{
-      value.workspace_id = Number(workspaceId)
-      value.project_id = Number(value.project_id)
-      value.assignee_id = Number(value.assignee_id)
-      mutate(value)
-      form.reset()
-      onCancel?.()
-    }catch{
-      //console.log("Create workspace failed")
-      toast.error("Failed to create workspace")
-    }
-    
+    value.workspace_id = Number(workspaceId)
+    value.project_id = Number(value.project_id)
+    value.assignee_id = Number(value.assignee_id)
+    mutate({value, taskId})
+    form.reset()
+    onCancel?.()
   }
 
 
@@ -65,14 +66,14 @@ const CreateTaskForm = ({onCancel, projectOptions, memberOptions}:CreateTaskForm
     <Card className="w-full h-full border-none shadow-none bg-neutral-100">
       <CardHeader className="flex p-5">
         <CardTitle className="text-xl font-semibold">
-          Create a new task
+          Update task
         </CardTitle>
       </CardHeader>
       <div className="px-5">
         <Separator orientation="horizontal"/>
       </div>
       <CardContent className="p-5">
-      <Form {...form}>
+        <Form {...form}>
           <form onSubmit={form.handleSubmit((value)=>{submitTask(value)})} className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-5">
               <FormField
@@ -191,7 +192,7 @@ const CreateTaskForm = ({onCancel, projectOptions, memberOptions}:CreateTaskForm
             <Separator orientation="horizontal"/>
             <div className="flex flex-row items-center justify-end gap-x-3">
               <Button className={cn(!onCancel && "invisible")} type="button" variant="secondary" size={"md"} onClick={onCancel}>Cancel</Button>
-              <Button type="submit" disabled={isPending} variant="default" size={"lg"}>Create Task</Button>
+              <Button type="submit" disabled={isPending} variant="default" size={"lg"}>Update Task</Button>
             </div>
           </form>
         </Form>
@@ -200,4 +201,4 @@ const CreateTaskForm = ({onCancel, projectOptions, memberOptions}:CreateTaskForm
   )
 }
 
-export default CreateTaskForm
+export default EditTaskForm

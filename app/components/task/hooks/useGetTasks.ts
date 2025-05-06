@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { ProjectType } from "@/app/lib/types/projectType"
 import { public_backend_url } from '@/app/config/config'
-
+import { useMemo } from 'react'
 interface UseGetTasksProps{
     workspaceId: string
     projectId?: string | null
@@ -19,10 +19,21 @@ export function useGetTasks({
   dueDate,
   search
 }: UseGetTasksProps) {
+  const filters = useMemo(()=>{
+    return {
+      workspaceId,
+      projectId: projectId ?? null,
+      assigneeId: assigneeId ?? null,
+      status: status ?? null,
+      dueDate: dueDate ?? null,
+      search: search ?? null
+    }
+
+  },[ workspaceId, projectId, assigneeId, status, dueDate, search])
   return useQuery({
-    queryKey: ['tasks', {workspaceId, projectId, assigneeId, status, dueDate, search}],
+    queryKey: ['tasks', filters],
     queryFn: async () => {
-      let url = new URL("/api/tasks/" + workspaceId, public_backend_url)
+      let url = new URL("/api/tasks/workspace/" + workspaceId, public_backend_url)
       if (projectId) url.searchParams.set("project_id", projectId)
       if (assigneeId) url.searchParams.set("assignee_id", assigneeId)
       if (status) url.searchParams.set("status", status)
@@ -38,12 +49,13 @@ export function useGetTasks({
         throw new Error("Failed to fetch tasks in task component")
       }
       const data = await res.json()
-      //console.log("data:",data)
+      console.log("data:",data)
       if(data.response_key != "SUCCESS"){
         throw new Error("Failed to fetch tasks in task component")
       }
       return data.data
     },
     enabled: !!workspaceId,
+    staleTime: 1000*60,
   })
 }

@@ -1,6 +1,5 @@
 'use client'
 import { FcGoogle, } from "react-icons/fc"
-import { loginAction} from "@/actions/auth_action";
 import { schema } from '@/app/schema/userSchema'
 import { FaApple, FaMicrosoft } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
@@ -26,10 +25,10 @@ import {z} from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import { toast } from "sonner";
-
+import {useLogin} from "@/features/login/api_request/useLogin"
 
 const LoginCard = ()=>{
-
+  const {mutate, isPending} = useLogin()
   const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(schema),
@@ -59,12 +58,7 @@ const LoginCard = ()=>{
   //   router.push("/")
   // }
   const submitLogin =(data: z.infer<typeof schema>)=>{
-    try{
-      loginAction(data)
-      toast.success("Logged in successfully")
-    }catch{
-      toast.error("Logged in failed")
-    }
+    mutate(data)
   }
   return (
      <Card className="w-full h-4/5 md:w-[500px] p-7 rounded-sm shadow-sm">
@@ -100,7 +94,7 @@ const LoginCard = ()=>{
             />
             {/* <Input placeholder="Email" required type="email" disabled={false}></Input> */}
             {/* <Input placeholder="Password" required type="password" disabled={false}></Input> */}
-            <Button type="submit" className="w-full" size={"lg"}>Log In</Button>
+            <Button disabled={isPending} type="submit" className="w-full" size={"lg"}>Log In</Button>
           </form>
         </Form>
       </CardContent>
@@ -108,15 +102,15 @@ const LoginCard = ()=>{
         <Separator/>
       </div>
       <CardContent className="flex flex-col gap-4 items-center justify-center">
-        <Button variant={"secondary"} className="w-full" size={"lg"}>
+        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
           <FcGoogle/>
           Google
         </Button>
-        <Button variant={"secondary"} className="w-full" size={"lg"}>
+        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
           <FaMicrosoft/>
           Microsoft
         </Button>
-        <Button variant={"secondary"} className="w-full" size={"lg"}>
+        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
           <FaApple/>
           Apple
         </Button>

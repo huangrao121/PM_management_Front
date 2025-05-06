@@ -13,9 +13,9 @@ const MemberAvatar = ({
   fallbackClassName
 }:MembersAvatarProps)=>{
   return (
-    <Avatar className={cn("size-5 rounded-full transition border border-neutral-300", className)}>
+    <Avatar className={cn("size-5 transition border border-neutral-100", className)}>
       <AvatarFallback className={cn(
-        "bg-neutral-200 font-medium text-neutral-500 flex items-center justify-center",
+        "bg-indigo-500 font-medium text-neutral-100 flex items-center justify-center",
         fallbackClassName
       )}>
         {name.charAt(0).toUpperCase()}

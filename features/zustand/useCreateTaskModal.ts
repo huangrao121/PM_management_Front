@@ -7,7 +7,12 @@ const useCreateTaskModal = ()=>{
     parseAsBoolean.withDefault(false).withOptions({clearOnDefault:true})
   )
   const onOpen = ()=> setIsOpen(true)
-  const onClose = ()=> setIsOpen(false)
+  const onClose = ()=> {
+    setTimeout(() => {
+      setIsOpen(false)
+    }
+    , 200)
+  }
 
   return {
     isOpen,

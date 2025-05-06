@@ -23,7 +23,7 @@ const ProjectAvatar = ({image, name, className}: ProjectAvatarProps)=>{
     <Avatar className={cn(
       "size-7 rounded-none", className
     )}>
-      <AvatarFallback className="text-white bg-blue-500 font-semibold text-md uppercase">
+      <AvatarFallback className="text-white bg-blue-500 rounded-sm font-semibold text-md uppercase">
         {name[0]}
       </AvatarFallback>
     </Avatar>
