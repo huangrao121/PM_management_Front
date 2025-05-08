@@ -9,7 +9,7 @@ const useGetMembers = ({workspaceId}: UseGetMembersProps)=>{
   return useQuery({
     queryKey: ["members", workspaceId],
     queryFn: async () => {
-      const response = await fetch(`${public_backend_url}/api/members/${workspaceId}`,{
+      const response = await fetch(`${public_backend_url}/api/members/workspace/${workspaceId}`,{
         method: "GET",
         headers: {
           "Content-Type": "application/json"

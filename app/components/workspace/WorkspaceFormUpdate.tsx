@@ -3,22 +3,28 @@
 import { z } from "zod"
 import {useForm} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { updateWSaction, deleteWSaction, ResetWSCode } from "@/actions/workspace_action"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
+import { deleteWSaction } from "@/actions/workspace_action"
 import { updateWrokspaceSchema } from "@/app/schema/workspaceSchema"
 import { useRef } from "react"
 import Image from "next/image"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {ArrowLeftIcon, ImageIcon, CopyIcon} from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/app/lib/utils"
 import { WorkspaceType } from "@/app/lib/types/workspaceType"
 import { useRouter } from "next/navigation"
+
 import { useConfirm } from "@/app/lib/hooks/useConfirm"
+import { useUpdateWorkspace } from "./hooks/useUpdateWorkspace"
+import { useResetInviteCode } from "./hooks/useResetInviteCode"
+
 interface WorkspacesUpdateProps {
   onCancel? : ()=>void,
   initialValues: WorkspaceType
@@ -56,6 +62,9 @@ const WorkspaceFormUpdate = ({onCancel, initialValues}:WorkspacesUpdateProps)=>{
     "destructive"
   )
 
+  const {mutate, isPending} = useUpdateWorkspace()
+  const {mutate: resetInviteCode, isPending: isResetting} = useResetInviteCode()
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if(file){
@@ -74,8 +83,7 @@ const WorkspaceFormUpdate = ({onCancel, initialValues}:WorkspacesUpdateProps)=>{
       }
       formData.append("id", initialValues.id.toString())
       //console.log(formData)
-      await updateWSaction(formData)
-      toast.success("Workspace updated")
+      mutate({formData, workspaceId: initialValues.id.toString()})
       form.reset()
       onCancel?.()
     }catch{
@@ -95,10 +103,7 @@ const WorkspaceFormUpdate = ({onCancel, initialValues}:WorkspacesUpdateProps)=>{
   const handleResetInviteCode = async ()=>{
     const ok = await confirmReset()
     if(!ok) return
-    const result = await ResetWSCode(initialValues.id.toString())
-    if(result){
-      router.refresh()
-    }
+    resetInviteCode(initialValues.id.toString())
   }
 
   const handleDelete = async ()=>{

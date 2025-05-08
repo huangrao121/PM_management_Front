@@ -10,7 +10,7 @@ export const useChangeTasks = ()=>{
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async ({tasks}: InputType) => {
-      console.log("tasks:",tasks)
+      //console.log("tasks:",tasks)
       const response = await fetch("http://localhost:8888/api/tasks/batchUpdate", {
         method: "PATCH",
         headers: {
