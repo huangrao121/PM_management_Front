@@ -16,7 +16,7 @@ const getWorkspaces = async (token?: RequestCookie) =>{
     throw new Error("Failed to fetch workspace info")
   }
   const result = await response.json()
-  //console.log(result.data)
+  // console.log(result.data)
   if(result.response_key != "SUCCESS"){
     throw new Error("Server side Failded fetch")
   }

@@ -1,7 +1,7 @@
 'use client'
 import { FcGoogle, } from "react-icons/fc"
 import { schema } from '@/app/schema/userSchema'
-import { FaApple, FaMicrosoft } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -24,10 +24,14 @@ import Link from "next/link";
 import {z} from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
-import { toast } from "sonner";
 import {useLogin} from "@/features/login/api_request/useLogin"
-
+import {useEffect} from "react"
+import { useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 const LoginCard = ()=>{
+  const router = useRouter()
+  const params = useSearchParams()
   const {mutate, isPending} = useLogin()
   const form = useForm({
     mode: 'onChange',
@@ -35,31 +39,22 @@ const LoginCard = ()=>{
     defaultValues: { email: '', password: '' },
   });
 
-  // const onSubmit = 
-  // async (value: z.infer<typeof schema>)=>{
-  //   'use server'
-  //   //console.log(value)
-  //   const res = await fetch("http://localhost:9001/api/user/login",{
-  //     method:'POST',
-  //     headers:{
-  //       'Content-Type':'application/json',
-  //     },
-  //     credentials:'include',
-  //     body:JSON.stringify({
-  //       email:value.email,
-  //       password:value.password
-  //     })
-  //   })
-  //   //console.log("response info: "+res.ok)
-  //   if(!res.ok){
-  //     const errorData = await res.json();
-  //     throw new Error(errorData.message || 'Login failed');
-  //   }
-  //   router.push("/")
-  // }
+
   const submitLogin =(data: z.infer<typeof schema>)=>{
     mutate(data)
   }
+
+  const handleGoogleLogin = async ()=>{
+    window.location.href=`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/OAuth/google/login`
+  }
+
+  // useEffect(()=>{
+  //   const error = params.get("error")
+  //   if (error){
+  //     toast.error(error)
+  //   }
+  // },[])
+
   return (
      <Card className="w-full h-4/5 md:w-[500px] p-7 rounded-sm shadow-sm">
       <CardHeader className="flex justify-center items-center">
@@ -102,17 +97,13 @@ const LoginCard = ()=>{
         <Separator/>
       </div>
       <CardContent className="flex flex-col gap-4 items-center justify-center">
-        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
+        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"} onClick={handleGoogleLogin}>
           <FcGoogle/>
           Google
         </Button>
         <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
-          <FaMicrosoft/>
-          Microsoft
-        </Button>
-        <Button disabled={isPending} variant={"secondary"} className="w-full" size={"lg"}>
-          <FaApple/>
-          Apple
+          <FaGithub/>
+          Github
         </Button>
       </CardContent>
       <CardFooter className="flex items-center justify-center gap-3">

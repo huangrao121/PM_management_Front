@@ -5,8 +5,12 @@ import ProjectIdClient from "./ProjectIdClient"
 import { redirect } from "next/navigation"
 
 const ProjectsPage = async ()=>{
-  const users = await getCurrentUser()
-  if(!users){
+  try {
+    const users = await getCurrentUser()
+    if(!users){
+      redirect("/login")
+    }
+  } catch (error) {
     redirect("/login")
   }
 

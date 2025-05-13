@@ -5,7 +5,7 @@ const useGetWorkspaces = ()=>{
   return useQuery({
     queryKey: ["workspaces"],
     queryFn: async ()=>{
-      const response = await fetch(`${public_backend_url}/api/workspace`,{
+      const response = await fetch(`${public_backend_url}/api/workspace/`,{
         method: "GET",
         credentials: "include",
       })

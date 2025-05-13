@@ -5,7 +5,6 @@ import WorkspaceFormModal from "../components/workspace/WorkspaceFrom-modal"
 import ProjectCreateModal from "../components/project/ProjectForm-modal"
 import TaskFormModal from "../components/task/TaskFormModal"
 import EditTaskModal from "../components/task/EditTaskModal"
-import getCurrentUser from "../lib/getCurrentUser"
 const NaviLayout = async ({children}: {children: React.ReactNode})=>{
   return (
     <div className="min-h-screen">

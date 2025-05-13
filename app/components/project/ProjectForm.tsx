@@ -8,7 +8,6 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { createWSaction } from "@/actions/workspace_action"
 import { projectSchema } from "@/app/schema/projectSchema"
 import { useRef } from "react"
 import Image from "next/image"
@@ -18,7 +17,7 @@ import { toast } from "sonner"
 import { cn } from "@/app/lib/utils"
 import { useRouter } from "next/navigation"
 import { useWorkspaceId } from "@/app/lib/hooks/useWorkspaceId"
-import { createPJaction } from "@/actions/project_action"
+import { useCreateProject } from "./hooks/useCreateProject"
 interface ProjectsProps {
   onCancel? : ()=>void
 }
@@ -38,6 +37,8 @@ const ProjectForm = ({onCancel}:ProjectsProps)=>{
       name: "",
     }
   })
+
+  const {mutate: createProject, isPending} = useCreateProject()
   const workspace_id = useWorkspaceId()
   const router = useRouter()
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +57,7 @@ const ProjectForm = ({onCancel}:ProjectsProps)=>{
         formData.append("project_image", value.image)
       }
       //console.log(formData)
-      createPJaction(formData)
+      createProject(formData)
       toast.success("Project created")
       form.reset()
       router.push("/")

@@ -33,6 +33,14 @@ export function useGetTasks({
   return useQuery({
     queryKey: ['tasks', filters],
     queryFn: async () => {
+      let body = {
+        workspaceId,
+        projectId: projectId ?? null,
+        assigneeId: assigneeId ?? null,
+        status: status ?? null,
+        dueDate: dueDate ?? null,
+        search: search ?? null
+      }
       let url = new URL("/api/tasks/workspace/" + workspaceId, public_backend_url)
       if (projectId) url.searchParams.set("project_id", projectId)
       if (assigneeId) url.searchParams.set("assignee_id", assigneeId)
